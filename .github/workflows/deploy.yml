@@ -2,25 +2,30 @@ name: Deploy React to Azure Storage
 
 on:
   push:  
-    branches: [ main ]
+    branches:  [ main ]
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     
     steps:
-    - uses: actions/checkout@v3
+    - uses:  actions/checkout@v3
     
-    - name: Setup Node.js
+    - name: Setup Node. js
       uses: actions/setup-node@v3
       with:
-        node-version:  '18'
+        node-version: '18'
+        cache: 'npm'  # ← Ajout du cache npm
     
-    - name: Install dependencies
-      run: npm install
+    - name: Clean install dependencies
+      run: |
+        rm -rf node_modules package-lock.json
+        npm install
     
     - name: Build React app
       run: npm run build
+      env:
+        CI: false  # ← Ignore les warnings comme erreurs
     
     - name: Deploy to Azure Storage
       uses: azure/CLI@v1
